@@ -1,239 +1,1003 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plano Nutricional – Loveland</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plano Nutricional — Loveland (Nutrien)</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
-  background:#F5F5F7;color:#1D1D1F;padding:16px
-}
-h1{font-size:20px;margin-bottom:12px}
-h3{font-size:11px;letter-spacing:.5px;color:#6B7280;margin:20px 0 10px}
-label{font-size:11px;color:#6B7280;margin-bottom:4px;display:block}
+  <style>
+    :root{
+      --bg:#F5F5F7;
+      --card:#FFFFFF;
+      --text:#1D1D1F;
+      --muted:#6B7280;
+      --line:#E5E7EB;
+      --blue:#007AFF;
+      --blue2:#0051D5;
+      --green:#16A34A;
+      --amber:#D97706;
+      --red:#DC2626;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --radius: 16px;
+      --radius2: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
 
-.card{
-  background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;
-  box-shadow:0 1px 6px rgba(0,0,0,.08)
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+    }
 
-input,select{
-  width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:8px
-}
-input.small{width:80px;text-align:center}
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
 
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:8px;border-bottom:1px solid #E5E7EB;font-size:13px;text-align:center}
-th{color:#6B7280;font-weight:600}
+    .topbar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .pill{
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,122,255,.12);
+      color: var(--blue2);
+      border: 1px solid rgba(0,122,255,.18);
+      white-space:nowrap;
+    }
 
-.badge{
-  display:inline-block;padding:2px 6px;font-size:10px;border-radius:6px;
-  margin-left:6px
-}
-.badge-macro-fisiologico{
-  background:#E0F2FE;color:#0369A1;border:1px solid #7DD3FC
-}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
 
-.status-ok{background:#DCFCE7}
-.status-warn{background:#FEF3C7}
-.status-bad{background:#FEE2E2}
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h3{
+      margin:0 0 10px;
+      font-size: 12px;
+      letter-spacing: .6px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
 
-.remove{
-  cursor:pointer;color:#EF4444;font-weight:bold
-}
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
 
-button{
-  padding:10px;border:none;border-radius:10px;
-  background:#007AFF;color:#fff;font-weight:600;cursor:pointer
-}
-button:hover{opacity:.9}
+    label{
+      font-size: 11px;
+      color: var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
 
-.no-print{display:block}
-@media print{
-  .no-print{display:none}
-  body{background:#fff}
-}
-</style>
+    input, select, button{
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    input[type="text"], input[type="number"], select{
+      width:100%;
+      padding: 10px 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      outline:none;
+    }
+    input[type="number"]{
+      font-family: var(--mono);
+    }
+    input:focus, select:focus{
+      border-color: rgba(0,122,255,.55);
+      box-shadow: 0 0 0 4px rgba(0,122,255,.12);
+    }
+
+    .btn{
+      border:0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      background: var(--blue);
+      color:#fff;
+      font-weight: 600;
+    }
+    .btn:hover{ background: var(--blue2); }
+    .btn.secondary{
+      background: #111827;
+    }
+    .btn.secondary:hover{
+      background: #0B1220;
+    }
+    .btn.ghost{
+      background: transparent;
+      color: var(--blue2);
+      border: 1px solid rgba(0,122,255,.35);
+    }
+    .btn.ghost:hover{
+      background: rgba(0,122,255,.08);
+    }
+    .btn.danger{
+      background: #991B1B;
+    }
+    .btn.danger:hover{
+      background: #7F1D1D;
+    }
+
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow:hidden;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    .table th, .table td{
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    .table th{
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      background: #FAFAFB;
+    }
+    .table tr:last-child td{ border-bottom:0; }
+
+    .tiny{
+      width: 90px;
+      min-width: 90px;
+    }
+    .mini{
+      width: 70px;
+      min-width: 70px;
+    }
+    .center{ text-align:center !important; }
+    .right{ text-align:right !important; }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #F9FAFB;
+      color: #111827;
+      white-space:nowrap;
+    }
+
+    .muted{ color: var(--muted); font-size:12px; }
+    .note{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #F9FAFB;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .statusDot{
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display:inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .ok{ background: var(--green); }
+    .warn{ background: var(--amber); }
+    .bad{ background: var(--red); }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 520px){
+      .split{ grid-template-columns: 1fr; }
+    }
+
+    .toolbar{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+
+    .rightTools{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .hr{
+      height: 1px;
+      background: var(--line);
+      margin: 12px 0;
+      border:0;
+    }
+
+    .dangerLink{
+      color: #991B1B;
+      cursor:pointer;
+      font-weight:600;
+      font-size:12px;
+      text-decoration:none;
+    }
+    .dangerLink:hover{ text-decoration: underline; }
+
+    /* PDF area */
+    #printArea{
+      background: white;
+      border-radius: var(--radius);
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Plano Nutricional — Loveland (Nutrien)</h1>
+        <div class="subtitle">Cadastro de produtos + cálculo por dose (L/ha ou kg/ha) + Excedente</div>
+      </div>
+      <div class="pill">Sem dados fictícios • você cadastra tudo</div>
+    </div>
 
-<div class="no-print">
+    <div class="grid">
+      <!-- LEFT: PLANO -->
+      <div class="card" id="printArea">
+        <h3>Produtos Loveland</h3>
 
-<div class="card">
-<h1>Plano Nutricional – Loveland</h1>
+        <div class="row" style="gap:12px;">
+          <div style="flex:1; min-width:260px;">
+            <label>Adicionar produto (do seu cadastro)</label>
+            <select id="selectAddProduct">
+              <option value="">Selecionar…</option>
+            </select>
+          </div>
+          <button class="btn" id="btnAddProduct">Adicionar ao plano</button>
+          <button class="btn ghost" id="btnOpenCadastro">Cadastrar/Editar produtos</button>
+        </div>
 
-<label>Cliente</label>
-<input id="clienteInput">
+        <table class="table" id="planTable" aria-label="Tabela do plano">
+          <thead>
+            <tr>
+              <th class="mini center">Usar</th>
+              <th>Produto</th>
+              <th class="tiny center">Dose</th>
+              <th class="tiny center">Unid.</th>
 
-<label>Cultura</label>
-<input id="culturaInput">
-</div>
+              <!-- Nutrientes (interno por chave, UI por label) -->
+              <th class="mini right" data-nutr="N">N</th>
+              <th class="mini right" data-nutr="P2O5">P₂O₅</th>
+              <th class="mini right" data-nutr="K2O">K₂O</th>
+              <th class="mini right" data-nutr="CaO">CaO</th>
+              <th class="mini right" data-nutr="MgO">Magnésio</th>
 
-<div class="card">
-<h3>Nutrientes Alvo (conforme rótulo)</h3>
+              <th class="mini right" data-nutr="Zn">Zn</th>
+              <th class="mini right" data-nutr="Mn">Mn</th>
+              <th class="mini right" data-nutr="Cu">Cu</th>
+              <th class="mini right" data-nutr="Fe">Fe</th>
+              <th class="mini right" data-nutr="B">B</th>
+              <th class="mini right" data-nutr="Mo">Mo</th>
+              <th class="mini right" data-nutr="Co">Co</th>
+              <th class="mini right" data-nutr="Ni">Ni</th>
 
-<select id="nutSelect">
-<option value="">Adicionar nutriente</option>
-<option>N</option>
-<option>P2O5</option>
-<option>K2O</option>
-<option>CaO</option>
-<option>MgO</option>
-<option>Zn</option>
-<option>Mn</option>
-<option>Cu</option>
-<option>Fe</option>
-<option>B</option>
-<option>Mo</option>
-<option>Co</option>
-<option>Ni</option>
-</select>
+              <th class="mini center">Rem</th>
+            </tr>
+          </thead>
+          <tbody id="planTbody">
+            <!-- linhas via JS -->
+          </tbody>
+        </table>
 
-<table id="targets">
-<tr><th>Nutriente</th><th>Alvo (g/ha)</th><th></th></tr>
-</table>
-</div>
+        <div class="note">
+          <div><b>Unidades:</b></div>
+          <div>• Se a dose estiver em <b>L/ha</b>, o sistema usa garantias em <b>g/L</b>.</div>
+          <div>• Se a dose estiver em <b>kg/ha</b>, o sistema usa garantias em <b>g/kg</b>.</div>
+          <div>• Se um nutriente não existir no produto, deixe em branco (não inventa número).</div>
+        </div>
 
-<div class="card">
-<h3>Produtos Loveland</h3>
+        <hr class="hr"/>
 
-<select id="prodSelect">
-<option value="">Adicionar produto</option>
-</select>
+        <h3>Alvos (g/ha)</h3>
+        <div class="split" id="targetsForm">
+          <!-- inputs via JS -->
+        </div>
 
-<table id="products">
-<tr>
-<th>Usar</th><th>Produto</th><th>Dose</th>
-<th>N</th><th>P₂O₅</th><th>K₂O</th><th>CaO</th><th>MgO</th>
-<th>Zn</th><th>Mn</th><th>Cu</th><th>Fe</th><th>B</th><th>Mo</th><th>Co</th><th>Ni</th>
-<th></th>
-</tr>
-</table>
-</div>
+        <div class="toolbar">
+          <div class="muted">Resultado é recalculado automaticamente.</div>
+          <div class="rightTools">
+            <button class="btn secondary" id="btnExportPdf">Exportar PDF</button>
+            <a class="dangerLink" id="btnResetPlan">Limpar plano</a>
+          </div>
+        </div>
 
-<div class="card">
-<h3>Resultado</h3>
-<table id="status">
-<tr><th>Nutriente</th><th>Alvo</th><th>Entregue</th><th>Status</th></tr>
-</table>
-</div>
+        <hr class="hr"/>
 
-<button onclick="exportPDF()">Exportar PDF</button>
+        <h3>Resultado</h3>
+        <table class="table" id="resultTable" aria-label="Tabela de resultado">
+          <thead>
+            <tr>
+              <th>Nutriente</th>
+              <th class="tiny right">Alvo</th>
+              <th class="tiny right">Entregue</th>
+              <th class="tiny right">Excedente</th>
+              <th class="tiny center">Status</th>
+            </tr>
+          </thead>
+          <tbody id="resultTbody">
+            <!-- via JS -->
+          </tbody>
+        </table>
+      </div>
 
-</div>
+      <!-- RIGHT: CADASTRO -->
+      <div class="card" id="cadastroCard" style="display:none;">
+        <h3>Cadastro de produtos</h3>
+
+        <div class="note" style="margin-top:0;">
+          Cadastre o produto com as garantias corretas. Depois ele aparece no dropdown para montar o plano.
+        </div>
+
+        <div class="split" style="margin-top:12px;">
+          <div>
+            <label>Nome do produto</label>
+            <input type="text" id="prodName" placeholder="Ex.: UpBor / MicroZim / Coach" />
+          </div>
+
+          <div>
+            <label>Categoria (texto livre)</label>
+            <input type="text" id="prodCategory" placeholder="Ex.: Micro / Regulador / Macro fisiológico" />
+          </div>
+
+          <div>
+            <label>Tipo de dose (padrão)</label>
+            <select id="prodDefaultUnit">
+              <option value="L/ha">L/ha (líquido)</option>
+              <option value="kg/ha">kg/ha (sólido)</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Observação (opcional)</label>
+            <input type="text" id="prodNote" placeholder="Ex.: foliar / TS / janela etc." />
+          </div>
+        </div>
+
+        <hr class="hr"/>
+
+        <h3>Garantias (g/L ou g/kg)</h3>
+        <div class="split" id="guaranteesForm">
+          <!-- inputs via JS -->
+        </div>
+
+        <div class="toolbar">
+          <div class="muted" id="unitHint">As garantias serão interpretadas conforme a unidade padrão escolhida.</div>
+          <div class="rightTools">
+            <button class="btn" id="btnSaveProduct">Salvar produto</button>
+            <button class="btn ghost" id="btnCloseCadastro">Voltar ao plano</button>
+          </div>
+        </div>
+
+        <hr class="hr"/>
+
+        <h3>Produtos cadastrados</h3>
+        <table class="table" aria-label="Tabela de produtos cadastrados">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th class="tiny center">Padrão</th>
+              <th class="tiny center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="productsTbody">
+            <!-- via JS -->
+          </tbody>
+        </table>
+
+        <div class="toolbar">
+          <div class="muted">Persistência local (localStorage).</div>
+          <div class="rightTools">
+            <a class="dangerLink" id="btnResetAll">Apagar todos os produtos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
-/* ===== BASE LOVELAND (RÓTULO MAPA) ===== */
-const produtosLoveland = [
- {nome:"PowerMicros",unidade:"L/ha",Zn:260,Mn:160,Mo:60,Cu:120},
- {nome:"Up Bor",unidade:"L/ha",B:160},
- {nome:"MicroFull",unidade:"L/ha",Zn:260,Mn:160,Cu:120,Mo:60},
- {nome:"MicroZim",unidade:"L/ha",Zn:360,Mn:257},
- {nome:"Super CoMo",unidade:"L/ha",Mo:243.2,Co:20.8},
- {nome:"NutriSync M",unidade:"L/ha",B:7,Mn:30,Zn:70,K2O:21},
- {nome:"NutriSync D",unidade:"L/ha",B:7,Mo:9,K2O:10},
- {nome:"NutriSync Complete",unidade:"L/ha",N:118,P2O5:83,K2O:47,Zn:6,Cu:6,Mn:6},
- {nome:"Liqui-N",unidade:"L/ha",N:322},
- {nome:"LiquiFos",unidade:"L/ha",N:158,P2O5:518},
- {nome:"UtilMag",unidade:"L/ha",MgO:73.2},
- {nome:"CalForce",unidade:"L/ha",CaO:120,MgO:40},
- {
-  nome:"Lokomotive",
-  unidade:"L/ha",
-  N:26,
-  K2O:327,
-  classe:"macro-fisiologico"
- }
-];
+  /***********************
+   * CONFIG / LABELS
+   ***********************/
+  // Chaves internas (cálculo) — UI mostra labels limpos.
+  const NUTRIENTS = [
+    { key:'N',    label:'Nitrogênio' },
+    { key:'P2O5', label:'Fósforo' },
+    { key:'K2O',  label:'Potássio' },
+    { key:'CaO',  label:'Cálcio' },
+    { key:'MgO',  label:'Magnésio' },
+    { key:'S',    label:'Enxofre' },
+    { key:'Zn',   label:'Zinco' },
+    { key:'Mn',   label:'Manganês' },
+    { key:'Cu',   label:'Cobre' },
+    { key:'Fe',   label:'Ferro' },
+    { key:'B',    label:'Boro' },
+    { key:'Mo',   label:'Molibdênio' },
+    { key:'Co',   label:'Cobalto' },
+    { key:'Ni',   label:'Níquel' },
+  ];
 
-const nutrients=["N","P2O5","K2O","CaO","MgO","Zn","Mn","Cu","Fe","B","Mo","Co","Ni"];
+  // Onde aparecerão na planilha do plano (ordem da tabela do topo)
+  const PLAN_NUTR_KEYS = ['N','P2O5','K2O','CaO','MgO','Zn','Mn','Cu','Fe','B','Mo','Co','Ni'];
 
-const nutSelect=document.getElementById("nutSelect");
-const prodSelect=document.getElementById("prodSelect");
-const targets=document.getElementById("targets");
-const products=document.getElementById("products");
-const statusTb=document.getElementById("status");
+  // Storage keys
+  const LS_PRODUCTS = 'loveland_products_v1';
+  const LS_PLAN = 'loveland_plan_v1';
+  const LS_TARGETS = 'loveland_targets_v1';
 
-produtosLoveland.forEach(p=>{
- const o=document.createElement("option");
- o.value=p.nome;o.textContent=p.nome;
- prodSelect.appendChild(o);
-});
+  /***********************
+   * STATE
+   ***********************/
+  let products = loadProducts();
+  let plan = loadPlan();
+  let targets = loadTargets();
 
-nutSelect.onchange=()=>{
- if(!nutSelect.value)return;
- const r=document.createElement("tr");
- r.dataset.n=nutSelect.value;
- r.innerHTML=`<td>${nutSelect.value}</td>
- <td><input class="small"></td>
- <td class="remove" onclick="this.parentNode.remove();calc()">✕</td>`;
- targets.appendChild(r);
- nutSelect.value="";
- calc();
-};
+  // Editing product
+  let editingProductId = null;
 
-prodSelect.onchange=()=>{
- const p=produtosLoveland.find(x=>x.nome===prodSelect.value);
- if(!p)return;
- const r=document.createElement("tr");
- r.dataset.p=p.nome;
- let html=`<td><input type="checkbox" checked></td>
- <td>${p.nome}
- ${p.classe==="macro-fisiologico"
- ?'<span class="badge badge-macro-fisiologico">Macro fisiológico</span>':""}
- </td>
- <td><input class="small"> ${p.unidade}</td>`;
- nutrients.forEach(n=>html+=`<td>${p[n]??"—"}</td>`);
- html+=`<td class="remove" onclick="this.parentNode.remove();calc()">✕</td>`;
- r.innerHTML=html;
- products.appendChild(r);
- prodSelect.value="";
- calc();
-};
+  /***********************
+   * DOM
+   ***********************/
+  const selectAddProduct = document.getElementById('selectAddProduct');
+  const btnAddProduct = document.getElementById('btnAddProduct');
+  const btnOpenCadastro = document.getElementById('btnOpenCadastro');
+  const btnCloseCadastro = document.getElementById('btnCloseCadastro');
+  const cadastroCard = document.getElementById('cadastroCard');
+  const printArea = document.getElementById('printArea');
 
-document.body.addEventListener("input",calc);
-document.body.addEventListener("change",calc);
+  const planTbody = document.getElementById('planTbody');
+  const resultTbody = document.getElementById('resultTbody');
 
-function calc(){
- const alvo={},total={};
- document.querySelectorAll("#targets tr[data-n]").forEach(r=>{
-  alvo[r.dataset.n]=parseFloat(r.querySelector("input").value)||0;
- });
- document.querySelectorAll("#products tr[data-p]").forEach(r=>{
-  if(!r.cells[0].querySelector("input").checked)return;
-  const dose=parseFloat(r.cells[2].querySelector("input").value)||0;
-  nutrients.forEach((n,i)=>{
-   const v=r.cells[3+i].innerText;
-   if(v!=="—" && alvo[n]!=null){
-    total[n]=(total[n]||0)+dose*parseFloat(v);
-   }
+  const targetsForm = document.getElementById('targetsForm');
+  const guaranteesForm = document.getElementById('guaranteesForm');
+  const productsTbody = document.getElementById('productsTbody');
+
+  const prodName = document.getElementById('prodName');
+  const prodCategory = document.getElementById('prodCategory');
+  const prodDefaultUnit = document.getElementById('prodDefaultUnit');
+  const prodNote = document.getElementById('prodNote');
+
+  const btnSaveProduct = document.getElementById('btnSaveProduct');
+  const btnResetAll = document.getElementById('btnResetAll');
+  const btnResetPlan = document.getElementById('btnResetPlan');
+  const btnExportPdf = document.getElementById('btnExportPdf');
+
+  /***********************
+   * INIT UI
+   ***********************/
+  buildTargetsForm();
+  buildGuaranteesForm();
+  refreshProductsUI();
+  refreshAddDropdown();
+  renderPlan();
+  recalcAll();
+
+  /***********************
+   * EVENTS
+   ***********************/
+  btnOpenCadastro.addEventListener('click', () => {
+    cadastroCard.style.display = '';
+    printArea.style.display = 'none';
+    editingProductId = null;
+    clearProductForm();
   });
- });
- statusTb.innerHTML='<tr><th>Nutriente</th><th>Alvo</th><th>Entregue</th><th>Status</th></tr>';
- Object.keys(alvo).forEach(n=>{
-  const a=alvo[n],e=total[n]||0,p=a?e/a:0;
-  let cls="status-bad",t="🔴";
-  if(p>=1){cls="status-ok";t="🟢";}
-  else if(p>=0.8){cls="status-warn";t="🟡";}
-  statusTb.innerHTML+=`<tr class="${cls}">
-   <td>${n}</td><td>${a.toFixed(1)}</td>
-   <td>${e.toFixed(1)}</td><td>${t}</td></tr>`;
- });
-}
 
-function exportPDF(){
- html2pdf().from(document.body).set({
-  margin:10,filename:"Plano_Nutricional_Loveland.pdf",
-  jsPDF:{unit:"mm",format:"a4"}
- }).save();
-}
+  btnCloseCadastro.addEventListener('click', () => {
+    cadastroCard.style.display = 'none';
+    printArea.style.display = '';
+    editingProductId = null;
+    clearProductForm();
+  });
+
+  btnAddProduct.addEventListener('click', () => {
+    const id = selectAddProduct.value;
+    if(!id) return;
+    const p = products.find(x => x.id === id);
+    if(!p) return;
+
+    // Add to plan with defaults
+    const line = {
+      id: cryptoId(),
+      productId: p.id,
+      use: true,
+      dose: '',          // user fills
+      unit: p.defaultUnit || 'L/ha'
+    };
+    plan.push(line);
+    savePlan();
+    renderPlan();
+    recalcAll();
+    selectAddProduct.value = '';
+  });
+
+  btnSaveProduct.addEventListener('click', () => {
+    const name = (prodName.value || '').trim();
+    if(!name) {
+      alert('Informe o nome do produto.');
+      return;
+    }
+
+    const category = (prodCategory.value || '').trim();
+    const defaultUnit = prodDefaultUnit.value;
+    const note = (prodNote.value || '').trim();
+
+    // Collect guarantees
+    const guarantees = {};
+    NUTRIENTS.forEach(n => {
+      const el = document.getElementById(`g_${n.key}`);
+      const val = (el && el.value !== '') ? toNum(el.value) : null;
+      if(val !== null && !Number.isNaN(val)) guarantees[n.key] = val;
+    });
+
+    // No fake data: allow saving without guarantees, but user will see blanks.
+    if(editingProductId){
+      const idx = products.findIndex(x => x.id === editingProductId);
+      if(idx >= 0){
+        products[idx] = { ...products[idx], name, category, defaultUnit, note, guarantees };
+      }
+    }else{
+      products.push({
+        id: cryptoId(),
+        name,
+        category,
+        defaultUnit,
+        note,
+        guarantees
+      });
+    }
+
+    saveProducts();
+    refreshProductsUI();
+    refreshAddDropdown();
+    clearProductForm();
+    editingProductId = null;
+    alert('Produto salvo.');
+  });
+
+  btnResetAll.addEventListener('click', () => {
+    if(!confirm('Apagar TODOS os produtos cadastrados?')) return;
+    products = [];
+    saveProducts();
+    refreshProductsUI();
+    refreshAddDropdown();
+
+    // Also cleanup plan lines that reference missing products
+    plan = plan.filter(l => products.some(p => p.id === l.productId));
+    savePlan();
+    renderPlan();
+    recalcAll();
+  });
+
+  btnResetPlan.addEventListener('click', (e) => {
+    e.preventDefault();
+    if(!confirm('Limpar o plano atual (linhas do plano)?')) return;
+    plan = [];
+    savePlan();
+    renderPlan();
+    recalcAll();
+  });
+
+  btnExportPdf.addEventListener('click', () => {
+    const opt = {
+      margin:       8,
+      filename:     'plano_nutricional_loveland.pdf',
+      image:        { type: 'jpeg', quality: 0.95 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(document.getElementById('printArea')).save();
+  });
+
+  /***********************
+   * BUILD FORMS
+   ***********************/
+  function buildTargetsForm(){
+    targetsForm.innerHTML = '';
+    // default targets object structure
+    NUTRIENTS.forEach(n => {
+      if(targets[n.key] == null) targets[n.key] = '';
+      const box = document.createElement('div');
+      box.innerHTML = `
+        <label>${escapeHtml(n.label)} (g/ha)</label>
+        <input type="number" inputmode="decimal" step="0.01" id="t_${n.key}" value="${targets[n.key] ?? ''}" placeholder="" />
+      `;
+      targetsForm.appendChild(box);
+
+      const inp = box.querySelector('input');
+      inp.addEventListener('input', () => {
+        targets[n.key] = inp.value;
+        saveTargets();
+        recalcAll();
+      });
+    });
+  }
+
+  function buildGuaranteesForm(){
+    guaranteesForm.innerHTML = '';
+    NUTRIENTS.forEach(n => {
+      const box = document.createElement('div');
+      box.innerHTML = `
+        <label>${escapeHtml(n.label)} (garantia)</label>
+        <input type="number" inputmode="decimal" step="0.01" id="g_${n.key}" value="" placeholder="" />
+      `;
+      guaranteesForm.appendChild(box);
+    });
+  }
+
+  /***********************
+   * RENDER PRODUCTS LIST
+   ***********************/
+  function refreshProductsUI(){
+    productsTbody.innerHTML = '';
+    if(products.length === 0){
+      productsTbody.innerHTML = `<tr><td colspan="3" class="muted">Nenhum produto cadastrado.</td></tr>`;
+      return;
+    }
+    products.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <b>${escapeHtml(p.name)}</b>
+            ${p.category ? `<span class="tag">${escapeHtml(p.category)}</span>` : ''}
+            ${p.note ? `<span class="tag">${escapeHtml(p.note)}</span>` : ''}
+          </div>
+        </td>
+        <td class="center"><span class="tag">${escapeHtml(p.defaultUnit || 'L/ha')}</span></td>
+        <td class="center">
+          <button class="btn ghost" data-act="edit">Editar</button>
+          <button class="btn danger" data-act="del">Excluir</button>
+        </td>
+      `;
+      tr.querySelector('[data-act="edit"]').addEventListener('click', () => editProduct(p.id));
+      tr.querySelector('[data-act="del"]').addEventListener('click', () => deleteProduct(p.id));
+      productsTbody.appendChild(tr);
+    });
+  }
+
+  function refreshAddDropdown(){
+    selectAddProduct.innerHTML = `<option value="">Selecionar…</option>`;
+    products.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      selectAddProduct.appendChild(opt);
+    });
+  }
+
+  function editProduct(id){
+    const p = products.find(x => x.id === id);
+    if(!p) return;
+    editingProductId = p.id;
+
+    prodName.value = p.name || '';
+    prodCategory.value = p.category || '';
+    prodDefaultUnit.value = p.defaultUnit || 'L/ha';
+    prodNote.value = p.note || '';
+
+    // Fill guarantees
+    NUTRIENTS.forEach(n => {
+      const el = document.getElementById(`g_${n.key}`);
+      el.value = (p.guarantees && p.guarantees[n.key] != null) ? p.guarantees[n.key] : '';
+    });
+
+    alert('Editando produto. Salve para aplicar.');
+  }
+
+  function deleteProduct(id){
+    const p = products.find(x => x.id === id);
+    if(!p) return;
+    if(!confirm(`Excluir o produto "${p.name}"?`)) return;
+
+    products = products.filter(x => x.id !== id);
+    saveProducts();
+
+    // remove from plan lines
+    plan = plan.filter(l => l.productId !== id);
+    savePlan();
+
+    refreshProductsUI();
+    refreshAddDropdown();
+    renderPlan();
+    recalcAll();
+  }
+
+  function clearProductForm(){
+    prodName.value = '';
+    prodCategory.value = '';
+    prodDefaultUnit.value = 'L/ha';
+    prodNote.value = '';
+    NUTRIENTS.forEach(n => {
+      const el = document.getElementById(`g_${n.key}`);
+      el.value = '';
+    });
+  }
+
+  /***********************
+   * PLAN RENDER
+   ***********************/
+  function renderPlan(){
+    planTbody.innerHTML = '';
+
+    if(plan.length === 0){
+      planTbody.innerHTML = `<tr><td colspan="19" class="muted">Nenhum produto no plano.</td></tr>`;
+      return;
+    }
+
+    plan.forEach((line, idx) => {
+      const p = products.find(x => x.id === line.productId);
+      if(!p) return;
+
+      const tr = document.createElement('tr');
+
+      const nutrientCells = PLAN_NUTR_KEYS.map(k => {
+        const v = (p.guarantees && p.guarantees[k] != null) ? p.guarantees[k] : '';
+        return `<td class="right">${v === '' ? '—' : formatNum(v)}</td>`;
+      }).join('');
+
+      tr.innerHTML = `
+        <td class="center">
+          <input type="checkbox" ${line.use ? 'checked' : ''} data-field="use"/>
+        </td>
+        <td>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <b>${escapeHtml(p.name)}</b>
+            ${p.category ? `<span class="tag">${escapeHtml(p.category)}</span>` : ''}
+          </div>
+        </td>
+        <td class="center">
+          <input class="tiny" type="number" step="0.01" inputmode="decimal" value="${line.dose ?? ''}" data-field="dose"/>
+        </td>
+        <td class="center">
+          <select class="tiny" data-field="unit">
+            <option value="L/ha" ${line.unit === 'L/ha' ? 'selected' : ''}>L/ha</option>
+            <option value="kg/ha" ${line.unit === 'kg/ha' ? 'selected' : ''}>kg/ha</option>
+          </select>
+        </td>
+        ${nutrientCells}
+        <td class="center"><a class="dangerLink" data-field="remove">✕</a></td>
+      `;
+
+      tr.querySelector('[data-field="use"]').addEventListener('change', (e) => {
+        line.use = e.target.checked;
+        savePlan();
+        recalcAll();
+      });
+
+      tr.querySelector('[data-field="dose"]').addEventListener('input', (e) => {
+        line.dose = e.target.value;
+        savePlan();
+        recalcAll();
+      });
+
+      tr.querySelector('[data-field="unit"]').addEventListener('change', (e) => {
+        line.unit = e.target.value;
+        savePlan();
+        recalcAll();
+      });
+
+      tr.querySelector('[data-field="remove"]').addEventListener('click', () => {
+        plan = plan.filter(x => x.id !== line.id);
+        savePlan();
+        renderPlan();
+        recalcAll();
+      });
+
+      planTbody.appendChild(tr);
+    });
+  }
+
+  /***********************
+   * CALC
+   ***********************/
+  function recalcAll(){
+    const delivered = calcDelivered(); // g/ha per nutrient
+    renderResults(delivered);
+  }
+
+  function calcDelivered(){
+    const sum = {};
+    NUTRIENTS.forEach(n => sum[n.key] = 0);
+
+    plan.forEach(line => {
+      if(!line.use) return;
+      const p = products.find(x => x.id === line.productId);
+      if(!p) return;
+
+      const doseNum = toNum(line.dose);
+      if(!doseNum || Number.isNaN(doseNum)) return;
+
+      // Interpretation:
+      // If dose is L/ha => guarantee is g/L
+      // If dose is kg/ha => guarantee is g/kg
+      NUTRIENTS.forEach(n => {
+        const g = p.guarantees ? p.guarantees[n.key] : null;
+        if(g == null || g === '' || Number.isNaN(g)) return;
+        sum[n.key] += doseNum * Number(g);
+      });
+    });
+
+    return sum;
+  }
+
+  function renderResults(delivered){
+    resultTbody.innerHTML = '';
+
+    NUTRIENTS.forEach(n => {
+      const targetVal = toNum(targets[n.key]);
+      const t = (targets[n.key] === '' || targets[n.key] == null) ? null : targetVal;
+
+      const d = delivered[n.key] ?? 0;
+
+      // Excedente = max(Entregue - Alvo, 0) — se não tem alvo, excedente = 0
+      const excedente = (t == null || Number.isNaN(t)) ? 0 : Math.max(d - t, 0);
+
+      // Status:
+      // - sem alvo => neutro
+      // - entregue >= alvo => ok
+      // - entregue < alvo => bad
+      let status = 'warn';
+      let statusText = '—';
+      if(t == null || Number.isNaN(t)){
+        status = 'warn';
+        statusText = 'Sem alvo';
+      }else if(d >= t){
+        status = 'ok';
+        statusText = 'OK';
+      }else{
+        status = 'bad';
+        statusText = 'Abaixo';
+      }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><b>${escapeHtml(n.label)}</b></td>
+        <td class="right">${t == null || Number.isNaN(t) ? '—' : formatNum(t)}</td>
+        <td class="right">${formatNum(d)}</td>
+        <td class="right">${formatNum(excedente)}</td>
+        <td class="center">
+          <span class="statusDot ${status}"></span>${escapeHtml(statusText)}
+        </td>
+      `;
+      resultTbody.appendChild(tr);
+    });
+  }
+
+  /***********************
+   * STORAGE
+   ***********************/
+  function loadProducts(){
+    try{
+      const raw = localStorage.getItem(LS_PRODUCTS);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return [];
+      return arr;
+    }catch(e){ return []; }
+  }
+  function saveProducts(){
+    localStorage.setItem(LS_PRODUCTS, JSON.stringify(products));
+  }
+
+  function loadPlan(){
+    try{
+      const raw = localStorage.getItem(LS_PLAN);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return [];
+      // sanitize
+      return arr.map(x => ({
+        id: x.id || cryptoId(),
+        productId: x.productId,
+        use: !!x.use,
+        dose: x.dose ?? '',
+        unit: (x.unit === 'kg/ha') ? 'kg/ha' : 'L/ha',
+      }));
+    }catch(e){ return []; }
+  }
+  function savePlan(){
+    localStorage.setItem(LS_PLAN, JSON.stringify(plan));
+  }
+
+  function loadTargets(){
+    try{
+      const raw = localStorage.getItem(LS_TARGETS);
+      if(!raw) return {};
+      const obj = JSON.parse(raw);
+      return (obj && typeof obj === 'object') ? obj : {};
+    }catch(e){ return {}; }
+  }
+  function saveTargets(){
+    localStorage.setItem(LS_TARGETS, JSON.stringify(targets));
+  }
+
+  /***********************
+   * UTILS
+   ***********************/
+  function cryptoId(){
+    // basic unique
+    return 'id_' + Math.random().toString(16).slice(2) + '_' + Date.now().toString(16);
+  }
+
+  function toNum(v){
+    if(v === '' || v == null) return NaN;
+    const n = Number(String(v).replace(',', '.'));
+    return n;
+  }
+
+  function formatNum(n){
+    const x = Number(n);
+    if(Number.isNaN(x)) return '—';
+    // keep 1 decimal like screenshots
+    const rounded = Math.round(x * 10) / 10;
+    return rounded.toFixed(1);
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#039;");
+  }
 </script>
-
 </body>
 </html>
