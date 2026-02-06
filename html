@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano Nutricional – Loveland</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+  background:#F5F5F7;color:#1D1D1F;padding:16px
+}
+h1{font-size:20px;margin-bottom:12px}
+h3{font-size:11px;letter-spacing:.5px;color:#6B7280;margin:20px 0 10px}
+label{font-size:11px;color:#6B7280;margin-bottom:4px;display:block}
+
+.card{
+  background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;
+  box-shadow:0 1px 6px rgba(0,0,0,.08)
+}
+
+input,select{
+  width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:8px
+}
+input.small{width:80px;text-align:center}
+
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid #E5E7EB;font-size:13px;text-align:center}
+th{color:#6B7280;font-weight:600}
+
+.badge{
+  display:inline-block;padding:2px 6px;font-size:10px;border-radius:6px;
+  margin-left:6px
+}
+.badge-macro-fisiologico{
+  background:#E0F2FE;color:#0369A1;border:1px solid #7DD3FC
+}
+
+.status-ok{background:#DCFCE7}
+.status-warn{background:#FEF3C7}
+.status-bad{background:#FEE2E2}
+
+.remove{
+  cursor:pointer;color:#EF4444;font-weight:bold
+}
+
+button{
+  padding:10px;border:none;border-radius:10px;
+  background:#007AFF;color:#fff;font-weight:600;cursor:pointer
+}
+button:hover{opacity:.9}
+
+.no-print{display:block}
+@media print{
+  .no-print{display:none}
+  body{background:#fff}
+}
+</style>
+</head>
+
+<body>
+
+<div class="no-print">
+
+<div class="card">
+<h1>Plano Nutricional – Loveland</h1>
+
+<label>Cliente</label>
+<input id="clienteInput">
+
+<label>Cultura</label>
+<input id="culturaInput">
+</div>
+
+<div class="card">
+<h3>Nutrientes Alvo (conforme rótulo)</h3>
+
+<select id="nutSelect">
+<option value="">Adicionar nutriente</option>
+<option>N</option>
+<option>P2O5</option>
+<option>K2O</option>
+<option>CaO</option>
+<option>MgO</option>
+<option>Zn</option>
+<option>Mn</option>
+<option>Cu</option>
+<option>Fe</option>
+<option>B</option>
+<option>Mo</option>
+<option>Co</option>
+<option>Ni</option>
+</select>
+
+<table id="targets">
+<tr><th>Nutriente</th><th>Alvo (g/ha)</th><th></th></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Produtos Loveland</h3>
+
+<select id="prodSelect">
+<option value="">Adicionar produto</option>
+</select>
+
+<table id="products">
+<tr>
+<th>Usar</th><th>Produto</th><th>Dose</th>
+<th>N</th><th>P₂O₅</th><th>K₂O</th><th>CaO</th><th>MgO</th>
+<th>Zn</th><th>Mn</th><th>Cu</th><th>Fe</th><th>B</th><th>Mo</th><th>Co</th><th>Ni</th>
+<th></th>
+</tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Resultado</h3>
+<table id="status">
+<tr><th>Nutriente</th><th>Alvo</th><th>Entregue</th><th>Status</th></tr>
+</table>
+</div>
+
+<button onclick="exportPDF()">Exportar PDF</button>
+
+</div>
+
+<script>
+/* ===== BASE LOVELAND (RÓTULO MAPA) ===== */
+const produtosLoveland = [
+ {nome:"PowerMicros",unidade:"L/ha",Zn:260,Mn:160,Mo:60,Cu:120},
+ {nome:"Up Bor",unidade:"L/ha",B:160},
+ {nome:"MicroFull",unidade:"L/ha",Zn:260,Mn:160,Cu:120,Mo:60},
+ {nome:"MicroZim",unidade:"L/ha",Zn:360,Mn:257},
+ {nome:"Super CoMo",unidade:"L/ha",Mo:243.2,Co:20.8},
+ {nome:"NutriSync M",unidade:"L/ha",B:7,Mn:30,Zn:70,K2O:21},
+ {nome:"NutriSync D",unidade:"L/ha",B:7,Mo:9,K2O:10},
+ {nome:"NutriSync Complete",unidade:"L/ha",N:118,P2O5:83,K2O:47,Zn:6,Cu:6,Mn:6},
+ {nome:"Liqui-N",unidade:"L/ha",N:322},
+ {nome:"LiquiFos",unidade:"L/ha",N:158,P2O5:518},
+ {nome:"UtilMag",unidade:"L/ha",MgO:73.2},
+ {nome:"CalForce",unidade:"L/ha",CaO:120,MgO:40},
+ {
+  nome:"Lokomotive",
+  unidade:"L/ha",
+  N:26,
+  K2O:327,
+  classe:"macro-fisiologico"
+ }
+];
+
+const nutrients=["N","P2O5","K2O","CaO","MgO","Zn","Mn","Cu","Fe","B","Mo","Co","Ni"];
+
+const nutSelect=document.getElementById("nutSelect");
+const prodSelect=document.getElementById("prodSelect");
+const targets=document.getElementById("targets");
+const products=document.getElementById("products");
+const statusTb=document.getElementById("status");
+
+produtosLoveland.forEach(p=>{
+ const o=document.createElement("option");
+ o.value=p.nome;o.textContent=p.nome;
+ prodSelect.appendChild(o);
+});
+
+nutSelect.onchange=()=>{
+ if(!nutSelect.value)return;
+ const r=document.createElement("tr");
+ r.dataset.n=nutSelect.value;
+ r.innerHTML=`<td>${nutSelect.value}</td>
+ <td><input class="small"></td>
+ <td class="remove" onclick="this.parentNode.remove();calc()">✕</td>`;
+ targets.appendChild(r);
+ nutSelect.value="";
+ calc();
+};
+
+prodSelect.onchange=()=>{
+ const p=produtosLoveland.find(x=>x.nome===prodSelect.value);
+ if(!p)return;
+ const r=document.createElement("tr");
+ r.dataset.p=p.nome;
+ let html=`<td><input type="checkbox" checked></td>
+ <td>${p.nome}
+ ${p.classe==="macro-fisiologico"
+ ?'<span class="badge badge-macro-fisiologico">Macro fisiológico</span>':""}
+ </td>
+ <td><input class="small"> ${p.unidade}</td>`;
+ nutrients.forEach(n=>html+=`<td>${p[n]??"—"}</td>`);
+ html+=`<td class="remove" onclick="this.parentNode.remove();calc()">✕</td>`;
+ r.innerHTML=html;
+ products.appendChild(r);
+ prodSelect.value="";
+ calc();
+};
+
+document.body.addEventListener("input",calc);
+document.body.addEventListener("change",calc);
+
+function calc(){
+ const alvo={},total={};
+ document.querySelectorAll("#targets tr[data-n]").forEach(r=>{
+  alvo[r.dataset.n]=parseFloat(r.querySelector("input").value)||0;
+ });
+ document.querySelectorAll("#products tr[data-p]").forEach(r=>{
+  if(!r.cells[0].querySelector("input").checked)return;
+  const dose=parseFloat(r.cells[2].querySelector("input").value)||0;
+  nutrients.forEach((n,i)=>{
+   const v=r.cells[3+i].innerText;
+   if(v!=="—" && alvo[n]!=null){
+    total[n]=(total[n]||0)+dose*parseFloat(v);
+   }
+  });
+ });
+ statusTb.innerHTML='<tr><th>Nutriente</th><th>Alvo</th><th>Entregue</th><th>Status</th></tr>';
+ Object.keys(alvo).forEach(n=>{
+  const a=alvo[n],e=total[n]||0,p=a?e/a:0;
+  let cls="status-bad",t="🔴";
+  if(p>=1){cls="status-ok";t="🟢";}
+  else if(p>=0.8){cls="status-warn";t="🟡";}
+  statusTb.innerHTML+=`<tr class="${cls}">
+   <td>${n}</td><td>${a.toFixed(1)}</td>
+   <td>${e.toFixed(1)}</td><td>${t}</td></tr>`;
+ });
+}
+
+function exportPDF(){
+ html2pdf().from(document.body).set({
+  margin:10,filename:"Plano_Nutricional_Loveland.pdf",
+  jsPDF:{unit:"mm",format:"a4"}
+ }).save();
+}
+</script>
+
+</body>
+</html>
