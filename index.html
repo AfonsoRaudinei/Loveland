@@ -1,1003 +1,1455 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Plano Nutricional — Loveland (Nutrien)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano Nutricional – Loveland</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, #F5F5F7 0%, #E5E5E7 100%);
+  color: #1D1D1F;
+  padding-bottom: 100px;
+}
 
-  <style>
-    :root{
-      --bg:#F5F5F7;
-      --card:#FFFFFF;
-      --text:#1D1D1F;
-      --muted:#6B7280;
-      --line:#E5E7EB;
-      --blue:#007AFF;
-      --blue2:#0051D5;
-      --green:#16A34A;
-      --amber:#D97706;
-      --red:#DC2626;
-      --shadow: 0 10px 30px rgba(0,0,0,.08);
-      --radius: 16px;
-      --radius2: 12px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    }
+/* FOOTER */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  padding: 12px 20px;
+  z-index: 80;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      padding: 16px;
-    }
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
 
-    .wrap{
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      gap: 16px;
-    }
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-    .topbar{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    h1{
-      margin:0;
-      font-size:18px;
-      letter-spacing:.2px;
-    }
-    .subtitle{
-      margin:4px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .pill{
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0,122,255,.12);
-      color: var(--blue2);
-      border: 1px solid rgba(0,122,255,.18);
-      white-space:nowrap;
-    }
+.footer-name {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: #1D1D1F;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: text;
+  transition: all 0.2s;
+  min-width: 120px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 16px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
+.footer-name:hover,
+.footer-name:focus {
+  color: #007AFF;
+  outline: none;
+}
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-    }
-    .card h3{
-      margin:0 0 10px;
-      font-size: 12px;
-      letter-spacing: .6px;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
+.footer-name::placeholder {
+  color: #C7C7CC;
+}
 
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+.footer-divider {
+  width: 1px;
+  height: 16px;
+  background: #E5E5E7;
+}
 
-    label{
-      font-size: 11px;
-      color: var(--muted);
-      display:block;
-      margin-bottom:6px;
-    }
+.footer-contact {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.85em;
+}
 
-    input, select, button{
-      font-family: inherit;
-      font-size: 13px;
-    }
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #86868B;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
 
-    input[type="text"], input[type="number"], select{
-      width:100%;
-      padding: 10px 10px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background:#fff;
-      outline:none;
-    }
-    input[type="number"]{
-      font-family: var(--mono);
-    }
-    input:focus, select:focus{
-      border-color: rgba(0,122,255,.55);
-      box-shadow: 0 0 0 4px rgba(0,122,255,.12);
-    }
+.footer-contact-item:hover {
+  color: #007AFF;
+}
 
-    .btn{
-      border:0;
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor:pointer;
-      background: var(--blue);
-      color:#fff;
-      font-weight: 600;
-    }
-    .btn:hover{ background: var(--blue2); }
-    .btn.secondary{
-      background: #111827;
-    }
-    .btn.secondary:hover{
-      background: #0B1220;
-    }
-    .btn.ghost{
-      background: transparent;
-      color: var(--blue2);
-      border: 1px solid rgba(0,122,255,.35);
-    }
-    .btn.ghost:hover{
-      background: rgba(0,122,255,.08);
-    }
-    .btn.danger{
-      background: #991B1B;
-    }
-    .btn.danger:hover{
-      background: #7F1D1D;
-    }
+.footer-phone-input {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  cursor: text;
+  transition: all 0.2s;
+  width: 130px;
+}
 
-    .table{
-      width:100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      overflow:hidden;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .table th, .table td{
-      padding: 10px 8px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      font-size: 13px;
-      vertical-align: middle;
-    }
-    .table th{
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      background: #FAFAFB;
-    }
-    .table tr:last-child td{ border-bottom:0; }
+.footer-phone-input:hover,
+.footer-phone-input:focus {
+  outline: none;
+  color: #007AFF;
+}
 
-    .tiny{
-      width: 90px;
-      min-width: 90px;
-    }
-    .mini{
-      width: 70px;
-      min-width: 70px;
-    }
-    .center{ text-align:center !important; }
-    .right{ text-align:right !important; }
+.footer-phone-input::placeholder {
+  color: #C7C7CC;
+}
 
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #F9FAFB;
-      color: #111827;
-      white-space:nowrap;
-    }
+@media (max-width: 768px) {
+  .footer {
+    padding: 12px 16px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .footer-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .footer-divider {
+    display: none;
+  }
+  
+  .footer-contact {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
 
-    .muted{ color: var(--muted); font-size:12px; }
-    .note{
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #F9FAFB;
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-    }
+/* TABS */
+.tab-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
 
-    .statusDot{
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      display:inline-block;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-    .ok{ background: var(--green); }
-    .warn{ background: var(--amber); }
-    .bad{ background: var(--red); }
+.tab-button {
+  flex: 1;
+  max-width: 300px;
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  color: #86868B;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
 
-    .split{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 520px){
-      .split{ grid-template-columns: 1fr; }
-    }
+.tab-button.active {
+  color: #007AFF;
+  border-bottom-color: #007AFF;
+}
 
-    .toolbar{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      margin-top: 8px;
-    }
+.tab-content {
+  display: none;
+  padding: 80px 20px 20px;
+}
 
-    .rightTools{
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+.tab-content.active {
+  display: block;
+}
 
-    .hr{
-      height: 1px;
-      background: var(--line);
-      margin: 12px 0;
-      border:0;
-    }
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
 
-    .dangerLink{
-      color: #991B1B;
-      cursor:pointer;
-      font-weight:600;
-      font-size:12px;
-      text-decoration:none;
-    }
-    .dangerLink:hover{ text-decoration: underline; }
+.header h1 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #1D1D1F;
+  margin-bottom: 4px;
+}
 
-    /* PDF area */
-    #printArea{
-      background: white;
-      border-radius: var(--radius);
-    }
-  </style>
+.header p {
+  font-size: 0.85em;
+  color: #86868B;
+}
+
+/* CARD */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #86868B;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* FORMS */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9em;
+  color: #86868B;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #D1D1D6;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.input-small {
+  width: 80px;
+  text-align: center;
+}
+
+.dropdown-add {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #D1D1D6;
+  border-radius: 8px;
+  font-size: 0.95em;
+  background: white;
+  cursor: pointer;
+}
+
+/* TABLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.9em;
+}
+
+th {
+  text-align: left;
+  padding: 12px 8px;
+  color: #86868B;
+  font-weight: 600;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #E5E5E7;
+}
+
+td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #F5F5F7;
+  vertical-align: middle;
+}
+
+.nutrient-row td:first-child,
+.product-name {
+  font-weight: 600;
+  color: #1D1D1F;
+}
+
+.product-row {
+  vertical-align: middle;
+}
+
+.product-unit {
+  font-size: 0.85em;
+  color: #86868B;
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.7em;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 6px;
+}
+
+.badge-macro {
+  background: #E0F2FE;
+  color: #0369A1;
+  border: 1px solid #7DD3FC;
+}
+
+/* STATUS */
+.status-ok {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-warn {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.status-bad {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.status-neutral {
+  background: #F5F5F7;
+  color: #86868B;
+}
+
+/* BUTTONS */
+.btn-remove {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #FF3B30;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove:hover {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.checkbox-cell {
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.result-table td {
+  padding: 16px 8px;
+  font-size: 0.95em;
+}
+
+.result-table .nutrient-col {
+  font-weight: 600;
+  color: #1D1D1F;
+}
+
+.result-table .value-col {
+  text-align: right;
+  font-weight: 500;
+}
+
+.result-table .status-col {
+  text-align: center;
+  font-size: 1.2em;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 70px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+}
+
+.fab-pdf {
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.5);
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #86868B;
+  font-size: 0.9em;
+}
+
+.empty-state-icon {
+  font-size: 3em;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* NUTRIENT GRID */
+.nutrient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.nutrient-value {
+  text-align: center;
+  font-size: 0.75em;
+  padding: 6px 4px;
+  background: #F5F5F7;
+  border-radius: 6px;
+}
+
+.nutrient-value strong {
+  display: block;
+  color: #1D1D1F;
+  font-size: 1.1em;
+  margin-bottom: 2px;
+}
+
+.nutrient-value span {
+  color: #86868B;
+  font-size: 0.85em;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #1D1D1F;
+}
+
+.btn-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #E5E5E7;
+  border-radius: 16px;
+  font-size: 20px;
+  color: #86868B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background: #D1D1D6;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+  color: white;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #E5E5E7;
+  color: #86868B;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-secondary:hover {
+  background: #D1D1D6;
+}
+
+.nutrient-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nutrient-item label {
+  font-size: 0.85em;
+  color: #86868B;
+  font-weight: 500;
+}
+
+.nutrient-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+.btn-edit:hover {
+  background: #BAE6FD;
+}
+
+.btn-delete {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.btn-delete:hover {
+  background: #FECACA;
+}
+
+.nutrient-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.nutrient-chip {
+  background: #F5F5F7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75em;
+  color: #1D1D1F;
+}
+
+.no-print {
+  display: block;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .tab-bar {
+    display: none !important;
+  }
+  body {
+    background: white;
+    padding: 20px;
+  }
+  .tab-content {
+    padding: 20px;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #E5E5E7;
+  }
+}
+
+@media (max-width: 768px) {
+  .tab-content {
+    padding: 80px 12px 12px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  table {
+    font-size: 0.85em;
+  }
+  
+  th, td {
+    padding: 8px 4px;
+  }
+  
+  .fab {
+    bottom: 60px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+  }
+  
+  .nutrient-grid,
+  .nutrient-form-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #F5F5F7;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #D1D1D6;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #86868B;
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div>
-        <h1>Plano Nutricional — Loveland (Nutrien)</h1>
-        <div class="subtitle">Cadastro de produtos + cálculo por dose (L/ha ou kg/ha) + Excedente</div>
-      </div>
-      <div class="pill">Sem dados fictícios • você cadastra tudo</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar no-print">
+  <button class="tab-button active" onclick="switchTab('plano')">📊 Plano Nutricional</button>
+  <button class="tab-button" onclick="switchTab('produtos')">⚙️ Gerenciar Produtos</button>
+</div>
+
+<!-- TAB 1: PLANO NUTRICIONAL -->
+<div id="tab-plano" class="tab-content active">
+  <div class="header">
+    <h1>Plano Nutricional</h1>
+    <p>Loveland – Nutrição Inteligente</p>
+  </div>
+
+  <!-- INFORMAÇÕES DO CLIENTE -->
+  <div class="card no-print">
+    <div class="form-group">
+      <label>Cliente</label>
+      <input type="text" id="clienteInput" placeholder="Nome do produtor">
     </div>
-
-    <div class="grid">
-      <!-- LEFT: PLANO -->
-      <div class="card" id="printArea">
-        <h3>Produtos Loveland</h3>
-
-        <div class="row" style="gap:12px;">
-          <div style="flex:1; min-width:260px;">
-            <label>Adicionar produto (do seu cadastro)</label>
-            <select id="selectAddProduct">
-              <option value="">Selecionar…</option>
-            </select>
-          </div>
-          <button class="btn" id="btnAddProduct">Adicionar ao plano</button>
-          <button class="btn ghost" id="btnOpenCadastro">Cadastrar/Editar produtos</button>
-        </div>
-
-        <table class="table" id="planTable" aria-label="Tabela do plano">
-          <thead>
-            <tr>
-              <th class="mini center">Usar</th>
-              <th>Produto</th>
-              <th class="tiny center">Dose</th>
-              <th class="tiny center">Unid.</th>
-
-              <!-- Nutrientes (interno por chave, UI por label) -->
-              <th class="mini right" data-nutr="N">N</th>
-              <th class="mini right" data-nutr="P2O5">P₂O₅</th>
-              <th class="mini right" data-nutr="K2O">K₂O</th>
-              <th class="mini right" data-nutr="CaO">CaO</th>
-              <th class="mini right" data-nutr="MgO">Magnésio</th>
-
-              <th class="mini right" data-nutr="Zn">Zn</th>
-              <th class="mini right" data-nutr="Mn">Mn</th>
-              <th class="mini right" data-nutr="Cu">Cu</th>
-              <th class="mini right" data-nutr="Fe">Fe</th>
-              <th class="mini right" data-nutr="B">B</th>
-              <th class="mini right" data-nutr="Mo">Mo</th>
-              <th class="mini right" data-nutr="Co">Co</th>
-              <th class="mini right" data-nutr="Ni">Ni</th>
-
-              <th class="mini center">Rem</th>
-            </tr>
-          </thead>
-          <tbody id="planTbody">
-            <!-- linhas via JS -->
-          </tbody>
-        </table>
-
-        <div class="note">
-          <div><b>Unidades:</b></div>
-          <div>• Se a dose estiver em <b>L/ha</b>, o sistema usa garantias em <b>g/L</b>.</div>
-          <div>• Se a dose estiver em <b>kg/ha</b>, o sistema usa garantias em <b>g/kg</b>.</div>
-          <div>• Se um nutriente não existir no produto, deixe em branco (não inventa número).</div>
-        </div>
-
-        <hr class="hr"/>
-
-        <h3>Alvos (g/ha)</h3>
-        <div class="split" id="targetsForm">
-          <!-- inputs via JS -->
-        </div>
-
-        <div class="toolbar">
-          <div class="muted">Resultado é recalculado automaticamente.</div>
-          <div class="rightTools">
-            <button class="btn secondary" id="btnExportPdf">Exportar PDF</button>
-            <a class="dangerLink" id="btnResetPlan">Limpar plano</a>
-          </div>
-        </div>
-
-        <hr class="hr"/>
-
-        <h3>Resultado</h3>
-        <table class="table" id="resultTable" aria-label="Tabela de resultado">
-          <thead>
-            <tr>
-              <th>Nutriente</th>
-              <th class="tiny right">Alvo</th>
-              <th class="tiny right">Entregue</th>
-              <th class="tiny right">Excedente</th>
-              <th class="tiny center">Status</th>
-            </tr>
-          </thead>
-          <tbody id="resultTbody">
-            <!-- via JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- RIGHT: CADASTRO -->
-      <div class="card" id="cadastroCard" style="display:none;">
-        <h3>Cadastro de produtos</h3>
-
-        <div class="note" style="margin-top:0;">
-          Cadastre o produto com as garantias corretas. Depois ele aparece no dropdown para montar o plano.
-        </div>
-
-        <div class="split" style="margin-top:12px;">
-          <div>
-            <label>Nome do produto</label>
-            <input type="text" id="prodName" placeholder="Ex.: UpBor / MicroZim / Coach" />
-          </div>
-
-          <div>
-            <label>Categoria (texto livre)</label>
-            <input type="text" id="prodCategory" placeholder="Ex.: Micro / Regulador / Macro fisiológico" />
-          </div>
-
-          <div>
-            <label>Tipo de dose (padrão)</label>
-            <select id="prodDefaultUnit">
-              <option value="L/ha">L/ha (líquido)</option>
-              <option value="kg/ha">kg/ha (sólido)</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Observação (opcional)</label>
-            <input type="text" id="prodNote" placeholder="Ex.: foliar / TS / janela etc." />
-          </div>
-        </div>
-
-        <hr class="hr"/>
-
-        <h3>Garantias (g/L ou g/kg)</h3>
-        <div class="split" id="guaranteesForm">
-          <!-- inputs via JS -->
-        </div>
-
-        <div class="toolbar">
-          <div class="muted" id="unitHint">As garantias serão interpretadas conforme a unidade padrão escolhida.</div>
-          <div class="rightTools">
-            <button class="btn" id="btnSaveProduct">Salvar produto</button>
-            <button class="btn ghost" id="btnCloseCadastro">Voltar ao plano</button>
-          </div>
-        </div>
-
-        <hr class="hr"/>
-
-        <h3>Produtos cadastrados</h3>
-        <table class="table" aria-label="Tabela de produtos cadastrados">
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th class="tiny center">Padrão</th>
-              <th class="tiny center">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="productsTbody">
-            <!-- via JS -->
-          </tbody>
-        </table>
-
-        <div class="toolbar">
-          <div class="muted">Persistência local (localStorage).</div>
-          <div class="rightTools">
-            <a class="dangerLink" id="btnResetAll">Apagar todos os produtos</a>
-          </div>
-        </div>
-      </div>
+    
+    <div class="form-group">
+      <label>Cultura</label>
+      <input type="text" id="culturaInput" placeholder="Ex: Soja, Milho, Algodão">
     </div>
   </div>
 
+  <!-- NUTRIENTES ALVO -->
+  <div class="card no-print">
+    <div class="section-title">Nutrientes Alvo (g/ha)</div>
+    
+    <select id="nutSelect" class="dropdown-add">
+      <option value="">+ Adicionar nutriente</option>
+      <option value="N">Nitrogênio (N)</option>
+      <option value="P2O5">Fósforo (P₂O₅)</option>
+      <option value="K2O">Potássio (K₂O)</option>
+      <option value="CaO">Cálcio (CaO)</option>
+      <option value="MgO">Magnésio (MgO)</option>
+      <option value="Zn">Zinco (Zn)</option>
+      <option value="Mn">Manganês (Mn)</option>
+      <option value="Cu">Cobre (Cu)</option>
+      <option value="Fe">Ferro (Fe)</option>
+      <option value="B">Boro (B)</option>
+      <option value="Mo">Molibdênio (Mo)</option>
+      <option value="Co">Cobalto (Co)</option>
+      <option value="Ni">Níquel (Ni)</option>
+    </select>
+    
+    <table id="targetTable">
+      <thead>
+        <tr>
+          <th>Nutriente</th>
+          <th style="text-align: center;">Alvo (g/ha)</th>
+          <th style="width: 40px;"></th>
+        </tr>
+      </thead>
+      <tbody id="targetBody"></tbody>
+    </table>
+    
+    <div id="targetEmpty" class="empty-state">
+      Nenhum nutriente adicionado
+    </div>
+  </div>
+
+  <!-- PRODUTOS LOVELAND -->
+  <div class="card no-print">
+    <div class="section-title">Produtos Loveland</div>
+    
+    <select id="prodSelect" class="dropdown-add">
+      <option value="">+ Adicionar produto</option>
+    </select>
+    
+    <table id="productTable" style="display: none;">
+      <thead>
+        <tr>
+          <th style="width: 40px; text-align: center;">Usar</th>
+          <th>Produto</th>
+          <th style="text-align: center; width: 100px;">Dose</th>
+          <th style="width: 40px;"></th>
+        </tr>
+      </thead>
+      <tbody id="productBody"></tbody>
+    </table>
+    
+    <div id="productEmpty" class="empty-state">
+      Nenhum produto adicionado
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="card">
+    <div class="section-title">Resultado do Plano</div>
+    
+    <table class="result-table" id="resultTable">
+      <thead>
+        <tr>
+          <th>Nutriente</th>
+          <th style="text-align: right;">Alvo</th>
+          <th style="text-align: right;">Entregue</th>
+          <th style="text-align: right;">Excesso</th>
+          <th style="text-align: center; width: 60px;">Status</th>
+        </tr>
+      </thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+    
+    <div id="resultEmpty" class="empty-state">
+      Adicione nutrientes e produtos para ver o resultado
+    </div>
+  </div>
+
+  <button class="fab fab-pdf no-print" onclick="exportPDF()" title="Exportar PDF">
+    📄
+  </button>
+</div>
+
+<!-- TAB 2: GERENCIAR PRODUTOS -->
+<div id="tab-produtos" class="tab-content">
+  <div class="header">
+    <h1>Gerenciar Produtos</h1>
+    <p>Loveland – Cadastro de Produtos</p>
+  </div>
+
+  <!-- LISTA DE PRODUTOS -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div class="section-title" style="margin-bottom: 0;">Produtos Cadastrados</div>
+      <button onclick="openModal()" style="padding: 6px 12px; border: none; border-radius: 8px; background: #E5E5E7; color: #1D1D1F; font-size: 0.85em; font-weight: 500; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#D1D1D6'" onmouseout="this.style.background='#E5E5E7'">
+        + Novo Produto
+      </button>
+    </div>
+    
+    <table id="adminProductTable">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Composição</th>
+          <th style="width: 140px; text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="adminProductBody"></tbody>
+    </table>
+    
+    <div id="adminEmptyState" class="empty-state" style="display: none;">
+      <div class="empty-state-icon">📦</div>
+      <div>Nenhum produto cadastrado</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE CADASTRO/EDIÇÃO -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Novo Produto</h2>
+      <button class="btn-close" onclick="closeModal()">×</button>
+    </div>
+    
+    <form id="productForm" onsubmit="saveProduct(event)">
+      <input type="hidden" id="editIndex" value="">
+      
+      <div class="form-group">
+        <label>Nome do Produto *</label>
+        <input type="text" id="nomeProduto" required placeholder="Ex: PowerMicros">
+      </div>
+      
+      <div class="form-group">
+        <label>Unidade *</label>
+        <select id="unidadeProduto" required>
+          <option value="">Selecione</option>
+          <option value="L/ha">L/ha</option>
+          <option value="kg/ha">kg/ha</option>
+          <option value="g/ha">g/ha</option>
+          <option value="mL/ha">mL/ha</option>
+        </select>
+      </div>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="macroFisiologico">
+        <label for="macroFisiologico">Produto Macro Fisiológico</label>
+      </div>
+      
+      <div class="form-group">
+        <label>Composição Nutricional (g/L ou g/kg)</label>
+        <div class="section-title" style="margin-top: 12px; margin-bottom: 8px;">Macronutrientes</div>
+        <div class="nutrient-form-grid">
+          <div class="nutrient-item">
+            <label>N</label>
+            <input type="number" id="nutrient_N" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>P₂O₅</label>
+            <input type="number" id="nutrient_P2O5" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>K₂O</label>
+            <input type="number" id="nutrient_K2O" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>CaO</label>
+            <input type="number" id="nutrient_CaO" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>MgO</label>
+            <input type="number" id="nutrient_MgO" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+        </div>
+        
+        <div class="section-title" style="margin-top: 20px; margin-bottom: 8px;">Micronutrientes</div>
+        <div class="nutrient-form-grid">
+          <div class="nutrient-item">
+            <label>Zn</label>
+            <input type="number" id="nutrient_Zn" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Mn</label>
+            <input type="number" id="nutrient_Mn" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Cu</label>
+            <input type="number" id="nutrient_Cu" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Fe</label>
+            <input type="number" id="nutrient_Fe" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>B</label>
+            <input type="number" id="nutrient_B" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Mo</label>
+            <input type="number" id="nutrient_Mo" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Co</label>
+            <input type="number" id="nutrient_Co" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="nutrient-item">
+            <label>Ni</label>
+            <input type="number" id="nutrient_Ni" class="input-small" min="0" step="0.1" placeholder="0">
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-primary" id="btnSave">Salvar Produto</button>
+      <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer no-print">
+  <div class="footer-content">
+    <div class="footer-info">
+      <input 
+        type="text" 
+        class="footer-name" 
+        id="footerName" 
+        placeholder="Seu nome"
+        onblur="saveFooterInfo()"
+      >
+      <span class="footer-divider"></span>
+      <span style="font-size: 0.75em; color: #86868B;">Consultor Técnico</span>
+    </div>
+    
+    <div class="footer-contact">
+      <a href="tel:+5500000000000" id="footerPhoneLink" class="footer-contact-item">
+        <span>📞</span>
+        <input 
+          type="text" 
+          class="footer-phone-input" 
+          id="footerPhone" 
+          placeholder="(00) 00000-0000"
+          onblur="saveFooterInfo()"
+        >
+      </a>
+    </div>
+  </div>
+</footer>
+
 <script>
-  /***********************
-   * CONFIG / LABELS
-   ***********************/
-  // Chaves internas (cálculo) — UI mostra labels limpos.
-  const NUTRIENTS = [
-    { key:'N',    label:'Nitrogênio' },
-    { key:'P2O5', label:'Fósforo' },
-    { key:'K2O',  label:'Potássio' },
-    { key:'CaO',  label:'Cálcio' },
-    { key:'MgO',  label:'Magnésio' },
-    { key:'S',    label:'Enxofre' },
-    { key:'Zn',   label:'Zinco' },
-    { key:'Mn',   label:'Manganês' },
-    { key:'Cu',   label:'Cobre' },
-    { key:'Fe',   label:'Ferro' },
-    { key:'B',    label:'Boro' },
-    { key:'Mo',   label:'Molibdênio' },
-    { key:'Co',   label:'Cobalto' },
-    { key:'Ni',   label:'Níquel' },
-  ];
+const nutrients = ["N", "P2O5", "K2O", "CaO", "MgO", "Zn", "Mn", "Cu", "Fe", "B", "Mo", "Co", "Ni"];
 
-  // Onde aparecerão na planilha do plano (ordem da tabela do topo)
-  const PLAN_NUTR_KEYS = ['N','P2O5','K2O','CaO','MgO','Zn','Mn','Cu','Fe','B','Mo','Co','Ni'];
+// PRODUTOS PADRÃO LOVELAND
+const produtosPadrao = [
+  {nome: "PowerMicros", unidade: "L/ha", Zn: 260, Mn: 160, Mo: 60, Cu: 120},
+  {nome: "Up Bor", unidade: "L/ha", B: 160},
+  {nome: "MicroFull", unidade: "L/ha", Zn: 260, Mn: 160, Cu: 120, Mo: 60},
+  {nome: "MicroZim", unidade: "L/ha", Zn: 360, Mn: 257},
+  {nome: "Super CoMo", unidade: "L/ha", Mo: 243.2, Co: 20.8},
+  {nome: "NutriSync M", unidade: "L/ha", B: 7, Mn: 30, Zn: 70, K2O: 21},
+  {nome: "NutriSync D", unidade: "L/ha", B: 7, Mo: 9, K2O: 10},
+  {nome: "NutriSync Complete", unidade: "L/ha", N: 118, P2O5: 83, K2O: 47, Zn: 6, Cu: 6, Mn: 6},
+  {nome: "Liqui-N", unidade: "L/ha", N: 322},
+  {nome: "LiquiFos", unidade: "L/ha", N: 158, P2O5: 518},
+  {nome: "UtilMag", unidade: "L/ha", MgO: 73.2},
+  {nome: "CalForce", unidade: "L/ha", CaO: 120, MgO: 40},
+  {nome: "Lokomotive", unidade: "L/ha", N: 26, K2O: 327, tipo: "macro-fisiologico"}
+];
 
-  // Storage keys
-  const LS_PRODUCTS = 'loveland_products_v1';
-  const LS_PLAN = 'loveland_plan_v1';
-  const LS_TARGETS = 'loveland_targets_v1';
+// INICIALIZAR LOCALSTORAGE
+if (!localStorage.getItem('produtosLoveland')) {
+  localStorage.setItem('produtosLoveland', JSON.stringify(produtosPadrao));
+}
 
-  /***********************
-   * STATE
-   ***********************/
-  let products = loadProducts();
-  let plan = loadPlan();
-  let targets = loadTargets();
+// Inicializar dados do consultor
+if (!localStorage.getItem('consultorInfo')) {
+  localStorage.setItem('consultorInfo', JSON.stringify({
+    nome: '',
+    telefone: '',
+    whatsapp: ''
+  }));
+}
 
-  // Editing product
-  let editingProductId = null;
+let produtosLoveland = JSON.parse(localStorage.getItem('produtosLoveland') || '[]');
 
-  /***********************
-   * DOM
-   ***********************/
-  const selectAddProduct = document.getElementById('selectAddProduct');
-  const btnAddProduct = document.getElementById('btnAddProduct');
-  const btnOpenCadastro = document.getElementById('btnOpenCadastro');
-  const btnCloseCadastro = document.getElementById('btnCloseCadastro');
-  const cadastroCard = document.getElementById('cadastroCard');
-  const printArea = document.getElementById('printArea');
+// Carregar informações do rodapé
+function loadFooterInfo() {
+  const info = JSON.parse(localStorage.getItem('consultorInfo') || '{}');
+  
+  document.getElementById('footerName').value = info.nome || '';
+  document.getElementById('footerPhone').value = info.telefone || '';
+  
+  const phoneClean = info.telefone ? info.telefone.replace(/\D/g, '') : '';
+  
+  if (phoneClean) {
+    document.getElementById('footerPhoneLink').href = `tel:+55${phoneClean}`;
+  }
+}
 
-  const planTbody = document.getElementById('planTbody');
-  const resultTbody = document.getElementById('resultTbody');
+// Salvar informações do rodapé
+function saveFooterInfo() {
+  const nome = document.getElementById('footerName').value;
+  const telefone = document.getElementById('footerPhone').value;
+  
+  const info = {
+    nome: nome,
+    telefone: telefone
+  };
+  
+  localStorage.setItem('consultorInfo', JSON.stringify(info));
+  loadFooterInfo();
+}
 
-  const targetsForm = document.getElementById('targetsForm');
-  const guaranteesForm = document.getElementById('guaranteesForm');
-  const productsTbody = document.getElementById('productsTbody');
+loadFooterInfo();
 
-  const prodName = document.getElementById('prodName');
-  const prodCategory = document.getElementById('prodCategory');
-  const prodDefaultUnit = document.getElementById('prodDefaultUnit');
-  const prodNote = document.getElementById('prodNote');
+// NAVEGAÇÃO ENTRE TABS
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  if (tabName === 'plano') {
+    document.querySelector('.tab-button:nth-child(1)').classList.add('active');
+    document.getElementById('tab-plano').classList.add('active');
+  } else {
+    document.querySelector('.tab-button:nth-child(2)').classList.add('active');
+    document.getElementById('tab-produtos').classList.add('active');
+    loadAdminProducts();
+  }
+}
 
-  const btnSaveProduct = document.getElementById('btnSaveProduct');
-  const btnResetAll = document.getElementById('btnResetAll');
-  const btnResetPlan = document.getElementById('btnResetPlan');
-  const btnExportPdf = document.getElementById('btnExportPdf');
+// ========== PLANO NUTRICIONAL ==========
 
-  /***********************
-   * INIT UI
-   ***********************/
-  buildTargetsForm();
-  buildGuaranteesForm();
-  refreshProductsUI();
-  refreshAddDropdown();
-  renderPlan();
-  recalcAll();
+const prodSelect = document.getElementById("prodSelect");
 
-  /***********************
-   * EVENTS
-   ***********************/
-  btnOpenCadastro.addEventListener('click', () => {
-    cadastroCard.style.display = '';
-    printArea.style.display = 'none';
-    editingProductId = null;
-    clearProductForm();
+function refreshProductDropdown() {
+  produtosLoveland = JSON.parse(localStorage.getItem('produtosLoveland') || '[]');
+  prodSelect.innerHTML = '<option value="">+ Adicionar produto</option>';
+  produtosLoveland.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.nome;
+    opt.textContent = p.nome;
+    prodSelect.appendChild(opt);
   });
+}
 
-  btnCloseCadastro.addEventListener('click', () => {
-    cadastroCard.style.display = 'none';
-    printArea.style.display = '';
-    editingProductId = null;
-    clearProductForm();
-  });
+refreshProductDropdown();
 
-  btnAddProduct.addEventListener('click', () => {
-    const id = selectAddProduct.value;
-    if(!id) return;
-    const p = products.find(x => x.id === id);
-    if(!p) return;
+// ADICIONAR NUTRIENTE ALVO
+document.getElementById("nutSelect").addEventListener("change", function() {
+  const nutriente = this.value;
+  if (!nutriente) return;
+  
+  if (document.querySelector(`#targetBody tr[data-nutrient="${nutriente}"]`)) {
+    alert("Este nutriente já foi adicionado");
+    this.value = "";
+    return;
+  }
+  
+  const tbody = document.getElementById("targetBody");
+  const tr = document.createElement("tr");
+  tr.className = "nutrient-row";
+  tr.dataset.nutrient = nutriente;
+  
+  tr.innerHTML = `
+    <td>${nutriente}</td>
+    <td style="text-align: center;">
+      <input type="number" class="input-small" min="0" step="0.1" placeholder="0">
+    </td>
+    <td style="text-align: center;">
+      <button class="btn-remove" onclick="removeTarget(this)">×</button>
+    </td>
+  `;
+  
+  tbody.appendChild(tr);
+  document.getElementById("targetEmpty").style.display = "none";
+  this.value = "";
+  
+  tr.querySelector("input").addEventListener("input", calcular);
+  calcular();
+});
 
-    // Add to plan with defaults
-    const line = {
-      id: cryptoId(),
-      productId: p.id,
-      use: true,
-      dose: '',          // user fills
-      unit: p.defaultUnit || 'L/ha'
-    };
-    plan.push(line);
-    savePlan();
-    renderPlan();
-    recalcAll();
-    selectAddProduct.value = '';
-  });
-
-  btnSaveProduct.addEventListener('click', () => {
-    const name = (prodName.value || '').trim();
-    if(!name) {
-      alert('Informe o nome do produto.');
-      return;
+// ADICIONAR PRODUTO
+document.getElementById("prodSelect").addEventListener("change", function() {
+  const produtoNome = this.value;
+  if (!produtoNome) return;
+  
+  const produto = produtosLoveland.find(p => p.nome === produtoNome);
+  if (!produto) return;
+  
+  const tbody = document.getElementById("productBody");
+  const tr = document.createElement("tr");
+  tr.className = "product-row";
+  tr.dataset.produto = produtoNome;
+  
+  const badge = produto.tipo === "macro-fisiologico" 
+    ? '<span class="badge badge-macro">Macro fisiológico</span>' 
+    : '';
+  
+  let composicao = '<div class="nutrient-grid">';
+  nutrients.forEach(n => {
+    if (produto[n]) {
+      composicao += `<div class="nutrient-value"><strong>${produto[n]}</strong><span>${n}</span></div>`;
     }
+  });
+  composicao += '</div>';
+  
+  tr.innerHTML = `
+    <td class="checkbox-cell">
+      <input type="checkbox" checked onchange="calcular()">
+    </td>
+    <td>
+      <div class="product-name">
+        ${produto.nome}
+        ${badge}
+      </div>
+      ${composicao}
+    </td>
+    <td style="text-align: center;">
+      <input type="number" class="input-small" min="0" step="0.1" placeholder="0" oninput="calcular()">
+      <div style="font-size: 0.75em; color: #86868B; margin-top: 4px;">${produto.unidade}</div>
+    </td>
+    <td style="text-align: center;">
+      <button class="btn-remove" onclick="removeProduct(this)">×</button>
+    </td>
+  `;
+  
+  tbody.appendChild(tr);
+  document.getElementById("productEmpty").style.display = "none";
+  document.getElementById("productTable").style.display = "table";
+  this.value = "";
+  calcular();
+});
 
-    const category = (prodCategory.value || '').trim();
-    const defaultUnit = prodDefaultUnit.value;
-    const note = (prodNote.value || '').trim();
+function removeTarget(btn) {
+  btn.closest("tr").remove();
+  if (document.getElementById("targetBody").children.length === 0) {
+    document.getElementById("targetEmpty").style.display = "block";
+  }
+  calcular();
+}
 
-    // Collect guarantees
-    const guarantees = {};
-    NUTRIENTS.forEach(n => {
-      const el = document.getElementById(`g_${n.key}`);
-      const val = (el && el.value !== '') ? toNum(el.value) : null;
-      if(val !== null && !Number.isNaN(val)) guarantees[n.key] = val;
-    });
+function removeProduct(btn) {
+  btn.closest("tr").remove();
+  if (document.getElementById("productBody").children.length === 0) {
+    document.getElementById("productEmpty").style.display = "block";
+    document.getElementById("productTable").style.display = "none";
+  }
+  calcular();
+}
 
-    // No fake data: allow saving without guarantees, but user will see blanks.
-    if(editingProductId){
-      const idx = products.findIndex(x => x.id === editingProductId);
-      if(idx >= 0){
-        products[idx] = { ...products[idx], name, category, defaultUnit, note, guarantees };
+function calcular() {
+  const alvos = {};
+  document.querySelectorAll("#targetBody tr").forEach(tr => {
+    const nutriente = tr.dataset.nutrient;
+    const valor = parseFloat(tr.querySelector("input").value) || 0;
+    alvos[nutriente] = valor;
+  });
+  
+  const entregue = {};
+  document.querySelectorAll("#productBody tr").forEach(tr => {
+    const checkbox = tr.querySelector('input[type="checkbox"]');
+    if (!checkbox.checked) return;
+    
+    const dose = parseFloat(tr.querySelector('input[type="number"]').value) || 0;
+    const produtoNome = tr.dataset.produto;
+    const produto = produtosLoveland.find(p => p.nome === produtoNome);
+    
+    if (produto && dose > 0) {
+      nutrients.forEach(n => {
+        if (produto[n]) {
+          entregue[n] = (entregue[n] || 0) + (dose * produto[n]);
+        }
+      });
+    }
+  });
+  
+  const resultBody = document.getElementById("resultBody");
+  resultBody.innerHTML = "";
+  
+  if (Object.keys(alvos).length === 0) {
+    document.getElementById("resultEmpty").style.display = "block";
+    return;
+  }
+  
+  document.getElementById("resultEmpty").style.display = "none";
+  
+  Object.keys(alvos).forEach(nutriente => {
+    const alvo = alvos[nutriente];
+    const entrega = entregue[nutriente] || 0;
+    const excesso = entrega - alvo;
+    const percentual = alvo > 0 ? (entrega / alvo) : 0;
+    
+    let status = "🔴";
+    let statusClass = "status-bad";
+    
+    if (percentual >= 1.0) {
+      status = "🟢";
+      statusClass = "status-ok";
+    } else if (percentual >= 0.8) {
+      status = "🟡";
+      statusClass = "status-warn";
+    }
+    
+    if (alvo === 0) {
+      statusClass = "status-neutral";
+      status = "—";
+    }
+    
+    const excessoFormatado = excesso >= 0 
+      ? `+${excesso.toFixed(1)}` 
+      : excesso.toFixed(1);
+    
+    const excessoColor = excesso >= 0 ? '#2E7D32' : '#C62828';
+    
+    const tr = document.createElement("tr");
+    tr.className = statusClass;
+    tr.innerHTML = `
+      <td class="nutrient-col">${nutriente}</td>
+      <td class="value-col">${alvo.toFixed(1)} g/ha</td>
+      <td class="value-col">${entrega.toFixed(1)} g/ha</td>
+      <td class="value-col" style="color: ${excessoColor}; font-weight: 600;">${excessoFormatado} g/ha</td>
+      <td class="status-col">${status}</td>
+    `;
+    resultBody.appendChild(tr);
+  });
+}
+
+function exportPDF() {
+  const element = document.getElementById('tab-plano');
+  const opt = {
+    margin: 10,
+    filename: 'Plano_Nutricional_Loveland.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 3 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(element).save();
+}
+
+// ========== GERENCIAR PRODUTOS ==========
+
+function loadAdminProducts() {
+  produtosLoveland = JSON.parse(localStorage.getItem('produtosLoveland') || '[]');
+  const tbody = document.getElementById('adminProductBody');
+  tbody.innerHTML = '';
+  
+  if (produtosLoveland.length === 0) {
+    document.getElementById('adminEmptyState').style.display = 'block';
+    document.getElementById('adminProductTable').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('adminEmptyState').style.display = 'none';
+  document.getElementById('adminProductTable').style.display = 'table';
+  
+  produtosLoveland.forEach((produto, index) => {
+    const tr = document.createElement('tr');
+    
+    const badge = produto.tipo === 'macro-fisiologico' 
+      ? '<span class="badge badge-macro">Macro fisiológico</span>' 
+      : '';
+    
+    let composicao = '<div class="nutrient-values">';
+    nutrients.forEach(n => {
+      if (produto[n]) {
+        composicao += `<span class="nutrient-chip">${n}: ${produto[n]}</span>`;
       }
-    }else{
-      products.push({
-        id: cryptoId(),
-        name,
-        category,
-        defaultUnit,
-        note,
-        guarantees
-      });
+    });
+    composicao += '</div>';
+    
+    tr.innerHTML = `
+      <td>
+        <div class="product-name">${produto.nome} ${badge}</div>
+        <div class="product-unit">${produto.unidade}</div>
+      </td>
+      <td>${composicao}</td>
+      <td style="text-align: center;">
+        <div class="action-buttons">
+          <button class="btn-edit" onclick="editProduct(${index})">Editar</button>
+          <button class="btn-delete" onclick="deleteProduct(${index})">Excluir</button>
+        </div>
+      </td>
+    `;
+    
+    tbody.appendChild(tr);
+  });
+}
+
+function openModal() {
+  document.getElementById('productModal').classList.add('active');
+  document.getElementById('modalTitle').textContent = 'Novo Produto';
+  document.getElementById('productForm').reset();
+  document.getElementById('editIndex').value = '';
+  document.getElementById('btnSave').textContent = 'Salvar Produto';
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('active');
+}
+
+function editProduct(index) {
+  const produtos = JSON.parse(localStorage.getItem('produtosLoveland'));
+  const produto = produtos[index];
+  
+  document.getElementById('modalTitle').textContent = 'Editar Produto';
+  document.getElementById('editIndex').value = index;
+  document.getElementById('nomeProduto').value = produto.nome;
+  document.getElementById('unidadeProduto').value = produto.unidade;
+  document.getElementById('macroFisiologico').checked = produto.tipo === 'macro-fisiologico';
+  document.getElementById('btnSave').textContent = 'Atualizar Produto';
+  
+  nutrients.forEach(n => {
+    const input = document.getElementById(`nutrient_${n}`);
+    if (input) {
+      input.value = produto[n] || '';
     }
-
-    saveProducts();
-    refreshProductsUI();
-    refreshAddDropdown();
-    clearProductForm();
-    editingProductId = null;
-    alert('Produto salvo.');
   });
+  
+  document.getElementById('productModal').classList.add('active');
+}
 
-  btnResetAll.addEventListener('click', () => {
-    if(!confirm('Apagar TODOS os produtos cadastrados?')) return;
-    products = [];
-    saveProducts();
-    refreshProductsUI();
-    refreshAddDropdown();
-
-    // Also cleanup plan lines that reference missing products
-    plan = plan.filter(l => products.some(p => p.id === l.productId));
-    savePlan();
-    renderPlan();
-    recalcAll();
-  });
-
-  btnResetPlan.addEventListener('click', (e) => {
-    e.preventDefault();
-    if(!confirm('Limpar o plano atual (linhas do plano)?')) return;
-    plan = [];
-    savePlan();
-    renderPlan();
-    recalcAll();
-  });
-
-  btnExportPdf.addEventListener('click', () => {
-    const opt = {
-      margin:       8,
-      filename:     'plano_nutricional_loveland.pdf',
-      image:        { type: 'jpeg', quality: 0.95 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    };
-    html2pdf().set(opt).from(document.getElementById('printArea')).save();
-  });
-
-  /***********************
-   * BUILD FORMS
-   ***********************/
-  function buildTargetsForm(){
-    targetsForm.innerHTML = '';
-    // default targets object structure
-    NUTRIENTS.forEach(n => {
-      if(targets[n.key] == null) targets[n.key] = '';
-      const box = document.createElement('div');
-      box.innerHTML = `
-        <label>${escapeHtml(n.label)} (g/ha)</label>
-        <input type="number" inputmode="decimal" step="0.01" id="t_${n.key}" value="${targets[n.key] ?? ''}" placeholder="" />
-      `;
-      targetsForm.appendChild(box);
-
-      const inp = box.querySelector('input');
-      inp.addEventListener('input', () => {
-        targets[n.key] = inp.value;
-        saveTargets();
-        recalcAll();
-      });
-    });
+function saveProduct(event) {
+  event.preventDefault();
+  
+  const produtos = JSON.parse(localStorage.getItem('produtosLoveland'));
+  const editIndex = document.getElementById('editIndex').value;
+  
+  const produto = {
+    nome: document.getElementById('nomeProduto').value,
+    unidade: document.getElementById('unidadeProduto').value
+  };
+  
+  if (document.getElementById('macroFisiologico').checked) {
+    produto.tipo = 'macro-fisiologico';
   }
-
-  function buildGuaranteesForm(){
-    guaranteesForm.innerHTML = '';
-    NUTRIENTS.forEach(n => {
-      const box = document.createElement('div');
-      box.innerHTML = `
-        <label>${escapeHtml(n.label)} (garantia)</label>
-        <input type="number" inputmode="decimal" step="0.01" id="g_${n.key}" value="" placeholder="" />
-      `;
-      guaranteesForm.appendChild(box);
-    });
-  }
-
-  /***********************
-   * RENDER PRODUCTS LIST
-   ***********************/
-  function refreshProductsUI(){
-    productsTbody.innerHTML = '';
-    if(products.length === 0){
-      productsTbody.innerHTML = `<tr><td colspan="3" class="muted">Nenhum produto cadastrado.</td></tr>`;
-      return;
+  
+  nutrients.forEach(n => {
+    const value = parseFloat(document.getElementById(`nutrient_${n}`).value);
+    if (value && value > 0) {
+      produto[n] = value;
     }
-    products.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <b>${escapeHtml(p.name)}</b>
-            ${p.category ? `<span class="tag">${escapeHtml(p.category)}</span>` : ''}
-            ${p.note ? `<span class="tag">${escapeHtml(p.note)}</span>` : ''}
-          </div>
-        </td>
-        <td class="center"><span class="tag">${escapeHtml(p.defaultUnit || 'L/ha')}</span></td>
-        <td class="center">
-          <button class="btn ghost" data-act="edit">Editar</button>
-          <button class="btn danger" data-act="del">Excluir</button>
-        </td>
-      `;
-      tr.querySelector('[data-act="edit"]').addEventListener('click', () => editProduct(p.id));
-      tr.querySelector('[data-act="del"]').addEventListener('click', () => deleteProduct(p.id));
-      productsTbody.appendChild(tr);
-    });
+  });
+  
+  if (editIndex !== '') {
+    produtos[parseInt(editIndex)] = produto;
+  } else {
+    produtos.push(produto);
   }
+  
+  localStorage.setItem('produtosLoveland', JSON.stringify(produtos));
+  closeModal();
+  loadAdminProducts();
+  refreshProductDropdown();
+}
 
-  function refreshAddDropdown(){
-    selectAddProduct.innerHTML = `<option value="">Selecionar…</option>`;
-    products.forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name;
-      selectAddProduct.appendChild(opt);
-    });
+function deleteProduct(index) {
+  if (!confirm('Tem certeza que deseja excluir este produto?')) {
+    return;
   }
+  
+  const produtos = JSON.parse(localStorage.getItem('produtosLoveland'));
+  produtos.splice(index, 1);
+  localStorage.setItem('produtosLoveland', JSON.stringify(produtos));
+  loadAdminProducts();
+  refreshProductDropdown();
+}
 
-  function editProduct(id){
-    const p = products.find(x => x.id === id);
-    if(!p) return;
-    editingProductId = p.id;
-
-    prodName.value = p.name || '';
-    prodCategory.value = p.category || '';
-    prodDefaultUnit.value = p.defaultUnit || 'L/ha';
-    prodNote.value = p.note || '';
-
-    // Fill guarantees
-    NUTRIENTS.forEach(n => {
-      const el = document.getElementById(`g_${n.key}`);
-      el.value = (p.guarantees && p.guarantees[n.key] != null) ? p.guarantees[n.key] : '';
-    });
-
-    alert('Editando produto. Salve para aplicar.');
+document.getElementById('productModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeModal();
   }
+});
 
-  function deleteProduct(id){
-    const p = products.find(x => x.id === id);
-    if(!p) return;
-    if(!confirm(`Excluir o produto "${p.name}"?`)) return;
-
-    products = products.filter(x => x.id !== id);
-    saveProducts();
-
-    // remove from plan lines
-    plan = plan.filter(l => l.productId !== id);
-    savePlan();
-
-    refreshProductsUI();
-    refreshAddDropdown();
-    renderPlan();
-    recalcAll();
-  }
-
-  function clearProductForm(){
-    prodName.value = '';
-    prodCategory.value = '';
-    prodDefaultUnit.value = 'L/ha';
-    prodNote.value = '';
-    NUTRIENTS.forEach(n => {
-      const el = document.getElementById(`g_${n.key}`);
-      el.value = '';
-    });
-  }
-
-  /***********************
-   * PLAN RENDER
-   ***********************/
-  function renderPlan(){
-    planTbody.innerHTML = '';
-
-    if(plan.length === 0){
-      planTbody.innerHTML = `<tr><td colspan="19" class="muted">Nenhum produto no plano.</td></tr>`;
-      return;
-    }
-
-    plan.forEach((line, idx) => {
-      const p = products.find(x => x.id === line.productId);
-      if(!p) return;
-
-      const tr = document.createElement('tr');
-
-      const nutrientCells = PLAN_NUTR_KEYS.map(k => {
-        const v = (p.guarantees && p.guarantees[k] != null) ? p.guarantees[k] : '';
-        return `<td class="right">${v === '' ? '—' : formatNum(v)}</td>`;
-      }).join('');
-
-      tr.innerHTML = `
-        <td class="center">
-          <input type="checkbox" ${line.use ? 'checked' : ''} data-field="use"/>
-        </td>
-        <td>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <b>${escapeHtml(p.name)}</b>
-            ${p.category ? `<span class="tag">${escapeHtml(p.category)}</span>` : ''}
-          </div>
-        </td>
-        <td class="center">
-          <input class="tiny" type="number" step="0.01" inputmode="decimal" value="${line.dose ?? ''}" data-field="dose"/>
-        </td>
-        <td class="center">
-          <select class="tiny" data-field="unit">
-            <option value="L/ha" ${line.unit === 'L/ha' ? 'selected' : ''}>L/ha</option>
-            <option value="kg/ha" ${line.unit === 'kg/ha' ? 'selected' : ''}>kg/ha</option>
-          </select>
-        </td>
-        ${nutrientCells}
-        <td class="center"><a class="dangerLink" data-field="remove">✕</a></td>
-      `;
-
-      tr.querySelector('[data-field="use"]').addEventListener('change', (e) => {
-        line.use = e.target.checked;
-        savePlan();
-        recalcAll();
-      });
-
-      tr.querySelector('[data-field="dose"]').addEventListener('input', (e) => {
-        line.dose = e.target.value;
-        savePlan();
-        recalcAll();
-      });
-
-      tr.querySelector('[data-field="unit"]').addEventListener('change', (e) => {
-        line.unit = e.target.value;
-        savePlan();
-        recalcAll();
-      });
-
-      tr.querySelector('[data-field="remove"]').addEventListener('click', () => {
-        plan = plan.filter(x => x.id !== line.id);
-        savePlan();
-        renderPlan();
-        recalcAll();
-      });
-
-      planTbody.appendChild(tr);
-    });
-  }
-
-  /***********************
-   * CALC
-   ***********************/
-  function recalcAll(){
-    const delivered = calcDelivered(); // g/ha per nutrient
-    renderResults(delivered);
-  }
-
-  function calcDelivered(){
-    const sum = {};
-    NUTRIENTS.forEach(n => sum[n.key] = 0);
-
-    plan.forEach(line => {
-      if(!line.use) return;
-      const p = products.find(x => x.id === line.productId);
-      if(!p) return;
-
-      const doseNum = toNum(line.dose);
-      if(!doseNum || Number.isNaN(doseNum)) return;
-
-      // Interpretation:
-      // If dose is L/ha => guarantee is g/L
-      // If dose is kg/ha => guarantee is g/kg
-      NUTRIENTS.forEach(n => {
-        const g = p.guarantees ? p.guarantees[n.key] : null;
-        if(g == null || g === '' || Number.isNaN(g)) return;
-        sum[n.key] += doseNum * Number(g);
-      });
-    });
-
-    return sum;
-  }
-
-  function renderResults(delivered){
-    resultTbody.innerHTML = '';
-
-    NUTRIENTS.forEach(n => {
-      const targetVal = toNum(targets[n.key]);
-      const t = (targets[n.key] === '' || targets[n.key] == null) ? null : targetVal;
-
-      const d = delivered[n.key] ?? 0;
-
-      // Excedente = max(Entregue - Alvo, 0) — se não tem alvo, excedente = 0
-      const excedente = (t == null || Number.isNaN(t)) ? 0 : Math.max(d - t, 0);
-
-      // Status:
-      // - sem alvo => neutro
-      // - entregue >= alvo => ok
-      // - entregue < alvo => bad
-      let status = 'warn';
-      let statusText = '—';
-      if(t == null || Number.isNaN(t)){
-        status = 'warn';
-        statusText = 'Sem alvo';
-      }else if(d >= t){
-        status = 'ok';
-        statusText = 'OK';
-      }else{
-        status = 'bad';
-        statusText = 'Abaixo';
-      }
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><b>${escapeHtml(n.label)}</b></td>
-        <td class="right">${t == null || Number.isNaN(t) ? '—' : formatNum(t)}</td>
-        <td class="right">${formatNum(d)}</td>
-        <td class="right">${formatNum(excedente)}</td>
-        <td class="center">
-          <span class="statusDot ${status}"></span>${escapeHtml(statusText)}
-        </td>
-      `;
-      resultTbody.appendChild(tr);
-    });
-  }
-
-  /***********************
-   * STORAGE
-   ***********************/
-  function loadProducts(){
-    try{
-      const raw = localStorage.getItem(LS_PRODUCTS);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      if(!Array.isArray(arr)) return [];
-      return arr;
-    }catch(e){ return []; }
-  }
-  function saveProducts(){
-    localStorage.setItem(LS_PRODUCTS, JSON.stringify(products));
-  }
-
-  function loadPlan(){
-    try{
-      const raw = localStorage.getItem(LS_PLAN);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      if(!Array.isArray(arr)) return [];
-      // sanitize
-      return arr.map(x => ({
-        id: x.id || cryptoId(),
-        productId: x.productId,
-        use: !!x.use,
-        dose: x.dose ?? '',
-        unit: (x.unit === 'kg/ha') ? 'kg/ha' : 'L/ha',
-      }));
-    }catch(e){ return []; }
-  }
-  function savePlan(){
-    localStorage.setItem(LS_PLAN, JSON.stringify(plan));
-  }
-
-  function loadTargets(){
-    try{
-      const raw = localStorage.getItem(LS_TARGETS);
-      if(!raw) return {};
-      const obj = JSON.parse(raw);
-      return (obj && typeof obj === 'object') ? obj : {};
-    }catch(e){ return {}; }
-  }
-  function saveTargets(){
-    localStorage.setItem(LS_TARGETS, JSON.stringify(targets));
-  }
-
-  /***********************
-   * UTILS
-   ***********************/
-  function cryptoId(){
-    // basic unique
-    return 'id_' + Math.random().toString(16).slice(2) + '_' + Date.now().toString(16);
-  }
-
-  function toNum(v){
-    if(v === '' || v == null) return NaN;
-    const n = Number(String(v).replace(',', '.'));
-    return n;
-  }
-
-  function formatNum(n){
-    const x = Number(n);
-    if(Number.isNaN(x)) return '—';
-    // keep 1 decimal like screenshots
-    const rounded = Math.round(x * 10) / 10;
-    return rounded.toFixed(1);
-  }
-
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'","&#039;");
-  }
+// Inicializar carregamento de produtos
+loadAdminProducts();
+calcular();
 </script>
+
 </body>
 </html>
